@@ -15,7 +15,7 @@ const (
 )
 
 func (d Length) String() string {
-	return d.Format(Millimeter, 1)
+	return d.Format(Meter, 1)
 }
 
 // 格式化长度表示
