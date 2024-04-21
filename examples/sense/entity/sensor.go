@@ -49,15 +49,14 @@ func (s *Sensor) ComputeSensingEnergyConsumed(duration time.Duration) value.Ener
 // --- 以下是Sensor的行为，每个时间单位按照方法名后缀的优先级依次执行
 // 节点耗能行为
 func (s *Sensor) Sense_0(context ctx.Context) {
+	// 如果能量下降到0以下则将节点移除
+	if s.energy <= 0 {
+		context.EntityManager().RemoveEntityById(s.id)
+	}
+
+	// 调用感知耗能动作
 	param := simplesense.SimpleSenseParam0{
 		Timeunit: context.Timer().GetTimeunit(),
 	}
 	action.HandleNoneTargetAction[*simplesense.SimpleSenseAction0, simplesense.Sensible](context.ActionHandler(), s, param)
-}
-
-// 节点状态判断行为，如果能量下降到0以下则将节点移除，节点被移除后不会再执行任何行为，包括Sense_0和RemoveIfDead_1
-func (s *Sensor) RemoveIfDead_1(context ctx.Context) {
-	if s.energy <= 0 {
-		context.EntityManager().RemoveEntityById(s.id)
-	}
 }
