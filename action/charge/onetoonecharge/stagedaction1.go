@@ -8,47 +8,47 @@ import (
 	"github.com/bianxiaojie/wrsn/common/value"
 )
 
-type Param1Staged interface {
+type OneToOneChargeStagedParam1 interface {
 	GetTimeunit() time.Duration // 仿真的时间单位
 }
 
 // 充电参数，在需要指定充电时长时使用
-type Param1StagedWithDuration struct {
+type OneToOneChargeStagedParam1WithDuration struct {
 	Timeunit time.Duration // 仿真的时间单位
 	Duration time.Duration // 充电总时长
 }
 
-func (p Param1StagedWithDuration) GetTimeunit() time.Duration {
+func (p OneToOneChargeStagedParam1WithDuration) GetTimeunit() time.Duration {
 	return p.Timeunit
 }
 
 // 充电参数，在需要指定充电后充电方剩余能量时使用
-type Param1StagedWithEnergyLevel struct {
+type OneToOneChargeStagedParam1WithEnergyLevel struct {
 	Timeunit    time.Duration // 仿真的时间单位
 	EnergyLevel value.Energy  // 充电后充电方剩余能量，比如为最大能量
 }
 
-func (p Param1StagedWithEnergyLevel) GetTimeunit() time.Duration {
+func (p OneToOneChargeStagedParam1WithEnergyLevel) GetTimeunit() time.Duration {
 	return p.Timeunit
 }
 
 // 充电参数，在需要指定充电方消耗能量时使用
-type Param1StagedWithEnergyConsumed struct {
+type OneToOneChargeStagedParam1WithEnergyConsumed struct {
 	Timeunit       time.Duration // 仿真的时间单位
 	energyConsumed value.Energy  // 充电方需要消耗的能量
 }
 
-func (p Param1StagedWithEnergyConsumed) GetTimeunit() time.Duration {
+func (p OneToOneChargeStagedParam1WithEnergyConsumed) GetTimeunit() time.Duration {
 	return p.Timeunit
 }
 
 // 充电参数，在需要指定被充电方收到能量时使用
-type Param1StagedWithEnergyCharged struct {
+type OneToOneChargeStagedParam1WithEnergyCharged struct {
 	Timeunit      time.Duration // 仿真的时间单位
 	energyCharged value.Energy  // 被充电方需要收到的能量
 }
 
-func (p Param1StagedWithEnergyCharged) GetTimeunit() time.Duration {
+func (p OneToOneChargeStagedParam1WithEnergyCharged) GetTimeunit() time.Duration {
 	return p.Timeunit
 }
 
@@ -62,7 +62,7 @@ const (
 	energyChargedMode              // 被充电方收到能量模式
 )
 
-type Stage1 struct {
+type OneToOneChargeStage1 struct {
 	mode mode
 	// 被充电方不存在
 	targetNil bool
@@ -77,7 +77,7 @@ type Stage1 struct {
 	energyCharged value.Energy
 }
 
-func (s Stage1) IsLastStage() bool {
+func (s OneToOneChargeStage1) IsLastStage() bool {
 	// 目标不存在则直接返回
 	if s.targetNil {
 		return true
@@ -97,38 +97,38 @@ func (s Stage1) IsLastStage() bool {
 	}
 }
 
-func (s Stage1) GetReturnedValue() any {
+func (s OneToOneChargeStage1) GetReturnedValue() any {
 	return nil
 }
 
 // 一对一充电Action
-type Action1Staged struct {
+type OneToOneChargeStagedAction1 struct {
 }
 
-func (a *Action1Staged) MakeStage(charger OneToOneCharger, target OneToOneChargingTarget, param Param1Staged) Stage1 {
+func (a *OneToOneChargeStagedAction1) MakeStage(charger OneToOneCharger, target OneToOneChargingTarget, param OneToOneChargeStagedParam1) OneToOneChargeStage1 {
 	// 目标不存在则直接返回
 	if target == nil {
-		return Stage1{targetNil: true}
+		return OneToOneChargeStage1{targetNil: true}
 	}
 
-	if p, ok := param.(Param1StagedWithDuration); ok {
-		return Stage1{
+	if p, ok := param.(OneToOneChargeStagedParam1WithDuration); ok {
+		return OneToOneChargeStage1{
 			mode:         durationMode,
 			durationLeft: p.Duration,
 		}
-	} else if p, ok := param.(Param1StagedWithEnergyLevel); ok {
-		return Stage1{
+	} else if p, ok := param.(OneToOneChargeStagedParam1WithEnergyLevel); ok {
+		return OneToOneChargeStage1{
 			mode:         energyLevelMode,
 			targetEnergy: target.GetEnergy(),
 			energyLevel:  min(p.EnergyLevel, target.GetMaxEnergy()),
 		}
-	} else if p, ok := param.(Param1StagedWithEnergyConsumed); ok {
-		return Stage1{
+	} else if p, ok := param.(OneToOneChargeStagedParam1WithEnergyConsumed); ok {
+		return OneToOneChargeStage1{
 			mode:           energyConsumedMode,
 			energyConsumed: p.energyConsumed,
 		}
-	} else if p, ok := param.(Param1StagedWithEnergyCharged); ok {
-		return Stage1{
+	} else if p, ok := param.(OneToOneChargeStagedParam1WithEnergyCharged); ok {
+		return OneToOneChargeStage1{
 			mode:          energyChargedMode,
 			energyCharged: p.energyCharged,
 		}
@@ -137,7 +137,7 @@ func (a *Action1Staged) MakeStage(charger OneToOneCharger, target OneToOneChargi
 	}
 }
 
-func (a *Action1Staged) ActionStage(charger OneToOneCharger, target OneToOneChargingTarget, param Param1Staged, stage Stage1) Stage1 {
+func (a *OneToOneChargeStagedAction1) ActionStage(charger OneToOneCharger, target OneToOneChargingTarget, param OneToOneChargeStagedParam1, stage OneToOneChargeStage1) OneToOneChargeStage1 {
 	if !stage.IsLastStage() {
 		// 更新状态
 		charger.SetState(state.Charging)

@@ -6,14 +6,14 @@ import (
 	"github.com/bianxiaojie/wrsn/common/state"
 )
 
-type Param0 struct {
+type SimpleSenseParam0 struct {
 	Timeunit time.Duration
 }
 
-type Action0 struct {
+type SimpleSenseAction0 struct {
 }
 
-func (a *Action0) Action(sensible Sensible, param Param0) any {
+func (a *SimpleSenseAction0) Action(sensible Sensible, param SimpleSenseParam0) any {
 	// 更新状态
 	sensible.SetState(state.Sensing)
 

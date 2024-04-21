@@ -2,13 +2,13 @@ package switchbattery
 
 import "github.com/bianxiaojie/wrsn/common/state"
 
-type Param0 struct {
+type SwitchbatteryParam0 struct {
 }
 
-type Action0 struct {
+type SwitchbatteryAction0 struct {
 }
 
-func (a *Action0) Action(batterySwitchable BatterySwitchable, param Param0) any {
+func (a *SwitchbatteryAction0) Action(batterySwitchable BatterySwitchable, param SwitchbatteryParam0) any {
 	// 更新状态
 	batterySwitchable.SetState(state.SwitchingBattery)
 

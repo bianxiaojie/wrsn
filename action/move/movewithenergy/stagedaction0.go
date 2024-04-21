@@ -8,37 +8,37 @@ import (
 )
 
 // 移动参数
-type Param0Staged struct {
+type MoveWithEnergyStagedParam0 struct {
 	Timeunit       time.Duration  // 仿真的时间单位
 	TargetPosition value.Position // 目标位置
 }
 
 // 移动Stage
-type Stage0 struct {
+type MoveWithEnergyStage0 struct {
 	currentPosition value.Position // 实体当前位置
 	targetPosition  value.Position // 目标位置
 }
 
-func (s Stage0) IsLastStage() bool {
+func (s MoveWithEnergyStage0) IsLastStage() bool {
 	return s.currentPosition == s.targetPosition
 }
 
-func (s Stage0) GetReturnedValue() any {
+func (s MoveWithEnergyStage0) GetReturnedValue() any {
 	return nil
 }
 
 // 移动Action
-type Action0Staged struct {
+type MoveWithEnergyStagedAction0 struct {
 }
 
-func (a *Action0Staged) MakeStage(m MovableWithEnergy, p Param0Staged) Stage0 {
-	return Stage0{
+func (a *MoveWithEnergyStagedAction0) MakeStage(m MovableWithEnergy, p MoveWithEnergyStagedParam0) MoveWithEnergyStage0 {
+	return MoveWithEnergyStage0{
 		currentPosition: m.GetPosition(),
 		targetPosition:  p.TargetPosition,
 	}
 }
 
-func (a *Action0Staged) ActionStage(movable MovableWithEnergy, param Param0Staged, stage Stage0) Stage0 {
+func (a *MoveWithEnergyStagedAction0) ActionStage(movable MovableWithEnergy, param MoveWithEnergyStagedParam0, stage MoveWithEnergyStage0) MoveWithEnergyStage0 {
 	if !stage.IsLastStage() {
 		// 更新状态
 		movable.SetState(state.Moving)
