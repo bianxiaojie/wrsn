@@ -35,7 +35,7 @@ func (p OneToOneChargeStagedParam1WithEnergyLevel) GetTimeunit() time.Duration {
 // 充电参数，在需要指定充电方消耗能量时使用
 type OneToOneChargeStagedParam1WithEnergyConsumed struct {
 	Timeunit       time.Duration // 仿真的时间单位
-	energyConsumed value.Energy  // 充电方需要消耗的能量
+	EnergyConsumed value.Energy  // 充电方需要消耗的能量
 }
 
 func (p OneToOneChargeStagedParam1WithEnergyConsumed) GetTimeunit() time.Duration {
@@ -45,7 +45,7 @@ func (p OneToOneChargeStagedParam1WithEnergyConsumed) GetTimeunit() time.Duratio
 // 充电参数，在需要指定被充电方收到能量时使用
 type OneToOneChargeStagedParam1WithEnergyCharged struct {
 	Timeunit      time.Duration // 仿真的时间单位
-	energyCharged value.Energy  // 被充电方需要收到的能量
+	EnergyCharged value.Energy  // 被充电方需要收到的能量
 }
 
 func (p OneToOneChargeStagedParam1WithEnergyCharged) GetTimeunit() time.Duration {
@@ -125,12 +125,12 @@ func (a *OneToOneChargeStagedAction1) MakeStage(charger OneToOneCharger, target 
 	} else if p, ok := param.(OneToOneChargeStagedParam1WithEnergyConsumed); ok {
 		return OneToOneChargeStage1{
 			mode:           energyConsumedMode,
-			energyConsumed: p.energyConsumed,
+			energyConsumed: p.EnergyConsumed,
 		}
 	} else if p, ok := param.(OneToOneChargeStagedParam1WithEnergyCharged); ok {
 		return OneToOneChargeStage1{
 			mode:          energyChargedMode,
-			energyCharged: p.energyCharged,
+			energyCharged: p.EnergyCharged,
 		}
 	} else {
 		panic(fmt.Sprintf("未知的参数类型：%T", param))
